@@ -2,10 +2,6 @@ package asciiART
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"os/exec"
-	"strconv"
 	"strings"
 )
 
@@ -15,40 +11,63 @@ func init() {
 	termWidth = GetTermWidth()
 }
 
-func Aliging(text, font, align, color string) string {
+func Aliging(letters_to_be_colored,text, font, align, color string) string {
 	if align == "left" || align == "right" || align == "center" {
-		return RightLeft(text, MapFont(font), align, color)
+		return RightLeft(letters_to_be_colored,text, MapFont(font), align, color)
 	} else if align == "justify" {
 		lines := strings.Split(text, "\\n")
 		for _, v := range lines {
-			Justify(text, v, MapFont(font), color)
+			Justify(letters_to_be_colored,text, v, MapFont(font), color)
 			return ""
 		}
 	}
 	return ""
 }
-func RightLeft(text, font, align, color string) string {
+func RightLeft(letters_to_be_colored,text, font, align, color string) string {
 	res := ""
 	newres := ""
+	string_beg_end, _ := ContainsString(letters_to_be_colored, text)
 	args := strings.Split(text, "\\n")
 	for _, word := range args {
 		for i := 0; i <= 8; i++ {
-			for _, letter := range word {
-				res += PrintFileLine(MapART(letter)+i, font, color)
+			str_len := len(word)
+			for idx := 0; idx < str_len; idx++ {
+				char := word[idx]
+				//* Check for the backslash (since this is taken from os arguments you have to read it like this '\\') and then read the letter after it
+				if char == '\\' {
+					if idx < len(word)-1 {
+						//* Apply tab if 't' appears
+						if word[idx+1] == 't' {
+							fmt.Print("\t")
+							idx++
+							continue
+						}
+					}
+				}
+				if IsInRange(string_beg_end, idx) || letters_to_be_colored == "" {
+					// Start printing the colored letler ART
+					res += PrintFileLine(MapART(rune(char))+i, (font), color)
+				} else {
+					// Start printing the letler ART in default color
+					res += PrintFileLine(MapART(rune(char))+i, (font), "")
+				}
+				// if i == 0 {
+				// 	size = len(res)
+				// }
 			}
 			if align == "left" {
 				newres += res
-				if i < 7 {
+				if i <= 8 {
 					newres += "\n"
 				}
 			} else if align == "right" {
 				newres += printSpaces(termWidth-len(res)) + res
-				if i < 7 {
+				if i <= 8 {
 					newres += "\n"
 				}
 			} else if align == "center" || align == "centre" {
 				newres += printSpaces((termWidth-len(res))/2) + res
-				if i < 7 {
+				if i <= 8 {
 					newres += "\n"
 				}
 			}
@@ -58,7 +77,7 @@ func RightLeft(text, font, align, color string) string {
 	return newres
 }
 
-func Justify(text, words, font, color string) {
+func Justify(letters_to_be_colored,text, words, font, color string) {
 	sws := SplitWhiteSpacesAWESOME(words)
 	ar := make([][]string, len(sws))
 	j := 0
@@ -82,12 +101,11 @@ func Justify(text, words, font, color string) {
 		textLen += len(arOfStr[0])
 	}
 	if len(sws) == 1 {
-		Ascii_Print(RightLeft(text, font, "left", color))
+		Ascii_Print(RightLeft(letters_to_be_colored,text, font, "left", color))
 	} else {
 		numSpaces := (termWidth - textLen) / (len(sws) - 1)
 		for i := 0; i < 8; i++ {
 			for k, v := range ar {
-
 				fmt.Print(Print_Colorize(color, v[i]))
 				if k != len(ar)-1 {
 					fmt.Print(printSpaces(numSpaces))
@@ -107,16 +125,17 @@ func printSpaces(num int) string {
 }
 
 func GetTermWidth() int {
-	cmd := exec.Command("stty", "size")
-	cmd.Stdin = os.Stdin
-	out, err := cmd.Output()
-	if err != nil {
-		log.Fatal(err)
-	}
-	out = out[:len(out)-1]
-	tput, _ := strconv.ParseInt(string(out[3:]), 10, 32)
-	tput2 := int(tput)
-	return tput2
+	// cmd := exec.Command("stty", "size")
+	// cmd.Stdin = os.Stdin
+	// out, err := cmd.Output()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// out = out[:len(out)-1]
+	// tput, _ := strconv.ParseInt(string(out[3:]), 10, 32)
+	// tput2 := int(tput)
+	// return tput2
+	return 186
 }
 
 func SplitWhiteSpacesAWESOME(str string) []string {
