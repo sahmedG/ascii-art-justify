@@ -90,3 +90,8 @@ func GetLine(filename string, num int) string {
 	defer file.Close()
 	return line
 }
+
+func ExportFile(outputfile string, output string,size int) {
+	f, _ := os.Create(outputfile)
+	fmt.Fprint(f, output)
+}

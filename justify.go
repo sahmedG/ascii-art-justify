@@ -17,13 +17,12 @@ func init() {
 }
 
 func Aliging(text, font, align string) {
-	if align == "left" || align == "right" || align == "center" || align == "centre" {
-		RightLeft(text, font, align)
+	if align == "left" || align == "right" || align == "center" {
+		RightLeft(text, MapFont(font), align)
 	} else if align == "justify" {
-
 		lines := strings.Split(text, "\\n")
 		for _, v := range lines {
-			Justify(v, font)
+			Justify(v, MapFont(font))
 		}
 	}
 }
@@ -33,20 +32,20 @@ func RightLeft(text, font, align string) {
 	for _, word := range args {
 		for i := 0; i < 8; i++ {
 			for _, letter := range word {
-				res += GetLine2(1+int(letter-' ')*9+i, font)
+				res += GetLine2(MapART(letter)+i, font)
 			}
 			if align == "left" {
 				fmt.Println(res)
 			}
 			if align == "right" {
+				fmt.Println()
 				fmt.Print(printSpaces(termWidth - len(res)))
 				fmt.Print(res)
 			}
 			if align == "center" || align == "centre" {
 				fmt.Print(printSpaces((termWidth - len(res)) / 2))
-				fmt.Print(res)
-				fmt.Print(printSpaces((termWidth - len(res)) / 2))
-				fmt.Println()
+				fmt.Println(res)
+
 			}
 			res = ""
 		}
@@ -103,23 +102,21 @@ func printSpaces(num int) string {
 }
 
 func GetTermWidth() int {
-	out, er1 := exec.Command("stty", "cols").Output()
-	out1 := strings.TrimSuffix(string(out), "\n")
-	num, er2 := strconv.Atoi(string(out1))
-	if er1 != nil {
-		log.Fatal(er1)
-		os.Exit(1)
+	cmd := exec.Command("stty", "size")
+	cmd.Stdin = os.Stdin
+	out, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
 	}
-	if er2 != nil {
-		log.Fatal(er2)
-		os.Exit(1)
-	}
-	return num
+	out = out[:len(out)-1]
+	tput, _ := strconv.ParseInt(string(out[3:]), 10, 32)
+	tput2 :=int(tput)
+	return tput2
 }
 
 func GetLine2(num int, filename string) string {
 
-	f, e := os.Open("../fonts/" + filename)
+	f, e := os.Open(filename)
 	if e != nil {
 		fmt.Println(e.Error())
 		os.Exit(0)

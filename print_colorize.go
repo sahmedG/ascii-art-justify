@@ -7,11 +7,11 @@ import (
 	"unicode"
 )
 
-func Print_Colorize(color string, input_str string) {
+func Print_Colorize(color string, input_str string) string{
 	if r, g, b := detect_rgb(color); r != -1 && g != -1 && b != -1 {
 		r, g, b := detect_rgb(color)
-		fmt.Print(colorizing_string(input_str, RGBColor{r, g, b}))
-		return
+		//fmt.Print(colorizing_string(input_str, RGBColor{r, g, b}))
+		return colorizing_string(input_str, RGBColor{r, g, b})
 	}
 	var Colors = map[string]string{
 		"black":   "\033[1;30m%s\033[0m",
@@ -25,10 +25,11 @@ func Print_Colorize(color string, input_str string) {
 		"orange":  "\033[38;5;208m%s\033[0m",
 	}
 	if Colors[color] == "" {
-		fmt.Print(input_str)
-		return
+		//fmt.Print(input_str)
+		return input_str
 	}
-	fmt.Printf(Colors[color], input_str)
+	rtnstr := fmt.Sprintf(Colors[color], input_str)
+	return rtnstr
 }
 
 func detect_rgb(color string) (int, int, int) {

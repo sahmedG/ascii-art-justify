@@ -2,8 +2,9 @@ package asciiART
 
 import "fmt"
 
-func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname string, color string) {
-
+func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname string, color string) (string,int){
+	res := ""
+	size := 0
 	string_beg_end, _ := ContainsString(letters_to_be_colored, str)
 	// if there is parts to be colored
 
@@ -26,13 +27,16 @@ func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname str
 			}
 			if IsInRange(string_beg_end, idx) || letters_to_be_colored == "" {
 				// Start printing the colored letler ART
-				PrintFileLine(MapART(rune(char))+i, MapFont(fontname), color)
-
+				res += PrintFileLine(MapART(rune(char))+i, MapFont(fontname), color)
 			} else {
 				// Start printing the letler ART in default color
-				PrintFileLine(MapART(rune(char))+i, MapFont(fontname), "")
+				res += PrintFileLine(MapART(rune(char))+i, MapFont(fontname), "")
+			}
+			if i == 0 {
+				size = len(res)
 			}
 		}
-		fmt.Print("\n") //* prints newline to start printing the rest of the art
+		res += "\n"
 	}
+	return res,size
 }

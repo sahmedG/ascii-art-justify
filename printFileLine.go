@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func PrintFileLine(lineNumber int, filePath string, color string) {
+func PrintFileLine(lineNumber int, filePath string, color string) string { 
 	//* this program scans the banner to get the art
 	file, err := os.Open(filePath)
 	// If there is an error, then handle it
@@ -30,15 +30,14 @@ func PrintFileLine(lineNumber int, filePath string, color string) {
 			break
 		}
 	}
-	if color == "" {
-		fmt.Print(line)
-	} else {
-		Print_Colorize(color, line)
-	}
-
-	// Check for any errors during scanning
 	if err := scanner.Err(); err != nil {
 		fmt.Println("Error scanning file:", err)
-		return
+		return ""
+	}
+	if color == "" {
+		return line
+	} else {
+		return Print_Colorize(color, line)
 	}
 }
+
