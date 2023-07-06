@@ -25,7 +25,6 @@ func Print_Colorize(color string, input_str string) string{
 		"orange":  "\033[38;5;208m%s\033[0m",
 	}
 	if Colors[color] == "" {
-		//fmt.Print(input_str)
 		return input_str
 	}
 	rtnstr := fmt.Sprintf(Colors[color], input_str)

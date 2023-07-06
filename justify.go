@@ -1,7 +1,6 @@
 package asciiART
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -16,43 +15,50 @@ func init() {
 	termWidth = GetTermWidth()
 }
 
-func Aliging(text, font, align string) {
+func Aliging(text, font, align, color string) string {
 	if align == "left" || align == "right" || align == "center" {
-		RightLeft(text, MapFont(font), align)
+		return RightLeft(text, MapFont(font), align, color)
 	} else if align == "justify" {
 		lines := strings.Split(text, "\\n")
 		for _, v := range lines {
-			Justify(v, MapFont(font))
+			Justify(text, v, MapFont(font), color)
+			return ""
 		}
 	}
+	return ""
 }
-func RightLeft(text, font, align string) {
+func RightLeft(text, font, align, color string) string {
 	res := ""
+	newres := ""
 	args := strings.Split(text, "\\n")
 	for _, word := range args {
-		for i := 0; i < 8; i++ {
+		for i := 0; i <= 8; i++ {
 			for _, letter := range word {
-				res += GetLine2(MapART(letter)+i, font)
+				res += PrintFileLine(MapART(letter)+i, font, color)
 			}
 			if align == "left" {
-				fmt.Println(res)
-			}
-			if align == "right" {
-				fmt.Println()
-				fmt.Print(printSpaces(termWidth - len(res)))
-				fmt.Print(res)
-			}
-			if align == "center" || align == "centre" {
-				fmt.Print(printSpaces((termWidth - len(res)) / 2))
-				fmt.Println(res)
-
+				newres += res
+				if i < 7 {
+					newres += "\n"
+				}
+			} else if align == "right" {
+				newres += printSpaces(termWidth-len(res)) + res
+				if i < 7 {
+					newres += "\n"
+				}
+			} else if align == "center" || align == "centre" {
+				newres += printSpaces((termWidth-len(res))/2) + res
+				if i < 7 {
+					newres += "\n"
+				}
 			}
 			res = ""
 		}
 	}
+	return newres
 }
 
-func Justify(words string, font string) {
+func Justify(text, words, font, color string) {
 	sws := SplitWhiteSpacesAWESOME(words)
 	ar := make([][]string, len(sws))
 	j := 0
@@ -61,7 +67,7 @@ func Justify(words string, font string) {
 		j = 0
 		for _, letter := range words {
 			if letter != ' ' {
-				container += GetLine2(1+int(letter-' ')*9+i, font)
+				container += PrintFileLine((MapART(letter) + i), font, "")
 			} else if letter == ' ' && container != "" {
 				ar[j] = append(ar[j], container)
 				container = ""
@@ -76,21 +82,20 @@ func Justify(words string, font string) {
 		textLen += len(arOfStr[0])
 	}
 	if len(sws) == 1 {
-		RightLeft(words, font, "left")
-		return
-	}
-	numSpaces := (termWidth - textLen) / (len(sws) - 1)
+		Ascii_Print(RightLeft(text, font, "left", color))
+	} else {
+		numSpaces := (termWidth - textLen) / (len(sws) - 1)
+		for i := 0; i < 8; i++ {
+			for k, v := range ar {
 
-	for i := 0; i < 8; i++ {
-		for k, v := range ar {
-			fmt.Print(v[i])
-			if k != len(ar)-1 {
-				fmt.Print(printSpaces(numSpaces))
+				fmt.Print(Print_Colorize(color, v[i]))
+				if k != len(ar)-1 {
+					fmt.Print(printSpaces(numSpaces))
+				}
 			}
+			fmt.Println()
 		}
-		fmt.Println()
 	}
-
 }
 
 func printSpaces(num int) string {
@@ -110,30 +115,8 @@ func GetTermWidth() int {
 	}
 	out = out[:len(out)-1]
 	tput, _ := strconv.ParseInt(string(out[3:]), 10, 32)
-	tput2 :=int(tput)
+	tput2 := int(tput)
 	return tput2
-}
-
-func GetLine2(num int, filename string) string {
-
-	f, e := os.Open(filename)
-	if e != nil {
-		fmt.Println(e.Error())
-		os.Exit(0)
-	}
-	defer f.Close()
-
-	content := bufio.NewScanner(f)
-	lineNum := 0
-	line := ""
-	for content.Scan() {
-		if lineNum == num {
-			line = content.Text()
-		}
-		lineNum++
-	}
-	return line
-
 }
 
 func SplitWhiteSpacesAWESOME(str string) []string {
