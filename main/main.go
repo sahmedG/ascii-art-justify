@@ -19,25 +19,10 @@ func main() {
 	outputfile := flag.String("output", "", "output")
 	justify := flag.String("align", "", "aliging")
 	flag.Parse()
-	if *colorname != "" && *outputfile == "" && *justify == "" && strings.Contains(os.Args[1], "--color=") {
-		if len(os.Args) == 3 {
-			ascii_art.text = asciiART.PrintART("", os.Args[2], "standard", *colorname)
-			asciiART.Ascii_Print(ascii_art.text)
-		} else if len(os.Args) == 4 {
-			if os.Args[3] == "shadow" || os.Args[3] == "standard" || os.Args[3] == "thinkertoy" || os.Args[3] == "weird" || os.Args[3] == "refined" {
-				ascii_art.text = asciiART.PrintART("", os.Args[2], os.Args[3], *colorname)
-				asciiART.Ascii_Print(ascii_art.text)
-			} else {
-				ascii_art.text = asciiART.PrintART(os.Args[2], os.Args[3], "standard", *colorname)
-				asciiART.Ascii_Print(ascii_art.text)
-			}
-		} else if len(os.Args) == 5 {
-			ascii_art.text = asciiART.PrintART(os.Args[2], os.Args[3], os.Args[4], *colorname)
-			asciiART.Ascii_Print(ascii_art.text)
-		}
+	if *colorname != "" && *outputfile == "" && *justify == ""  {
+		asciiART.ColorFlag(os.Args,*colorname)
 		return
-
-	} else if *colorname != "" && *outputfile != "" && (strings.Contains(os.Args[1], "--color=") && strings.Contains(os.Args[2], "--output=") || strings.Contains(os.Args[2], "--color=") && strings.Contains(os.Args[1], "--output=")) {
+	} else if *colorname != "" && *outputfile != "" &&  *justify == "" && (strings.Contains(os.Args[1], "--color=") && strings.Contains(os.Args[2], "--output=") || strings.Contains(os.Args[2], "--color=") && strings.Contains(os.Args[1], "--output=")) {
 		if len(os.Args) == 4 {
 			ascii_art.text = asciiART.PrintART("", os.Args[3], "standard", *colorname)
 			asciiART.Ascii_Print(ascii_art.text)
