@@ -72,22 +72,32 @@ func main() {
 		}
 		return
 	} else if *colorname == "" && *justify != "" && *outputfile == "" && strings.Contains(os.Args[1], "--align=") {
+		if *justify != "right" && *justify != "left" && *justify != "justify" && *justify != "center" {
+			fmt.Println("Error: align must be right or left or center or justify")
+		}
 		if len(os.Args) == 3 {
-			asciiART.Ascii_Print(asciiART.Aliging("",os.Args[2], "standard", *justify, ""))
+			asciiART.Ascii_Print(asciiART.Aliging("", os.Args[2], "standard", *justify, ""))
 		} else if len(os.Args) == 4 {
-			asciiART.Ascii_Print(asciiART.Aliging("",os.Args[2], os.Args[3], *justify, ""))
+			asciiART.Ascii_Print(asciiART.Aliging("", os.Args[2], os.Args[3], *justify, ""))
 		}
 		return
 	} else if *colorname != "" && *justify != "" && *outputfile == "" && (strings.Contains(os.Args[1], "--color=") && strings.Contains(os.Args[2], "--align=") || strings.Contains(os.Args[2], "--color=") && strings.Contains(os.Args[1], "--align=")) {
+		if *justify != "right" && *justify != "left" && *justify != "justify" && *justify != "center" {
+			fmt.Println("Error: align must be right or left or center or justify")
+		}
 		if len(os.Args) == 4 {
-			asciiART.Ascii_Print(asciiART.Aliging("",os.Args[3], "standard", *justify, *colorname))
+			asciiART.Ascii_Print(asciiART.Aliging("", os.Args[3], "standard", *justify, *colorname))
 		} else if len(os.Args) == 5 {
-			asciiART.Ascii_Print(asciiART.Aliging(os.Args[3],os.Args[4], "standard", *justify, *colorname))
-		}else if len(os.Args) == 6 {
-			asciiART.Ascii_Print(asciiART.Aliging(os.Args[3],os.Args[4], os.Args[5], *justify, *colorname))
+			if os.Args[4] == "shadow" || os.Args[4] == "standard" || os.Args[4] == "thinkertoy" || os.Args[4] == "weird" || os.Args[4] == "refined" {
+				asciiART.Ascii_Print(asciiART.Aliging("", os.Args[3], os.Args[4], *justify, *colorname))
+			} else {
+				asciiART.Ascii_Print(asciiART.Aliging(os.Args[3], os.Args[4], "standard", *justify, *colorname))
+			}
+		} else if len(os.Args) == 6 {
+			asciiART.Ascii_Print(asciiART.Aliging(os.Args[3], os.Args[4], os.Args[5], *justify, *colorname))
 		}
 		return
-		} else {
+	} else {
 		if len(os.Args) == 2 {
 			ascii_art.text = asciiART.PrintART("", os.Args[1], "standard", "")
 			asciiART.Ascii_Print(ascii_art.text)

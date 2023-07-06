@@ -1,8 +1,6 @@
 package asciiART
 
-import "fmt"
-
-func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname string, color string) (string){
+func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname string, color string) string {
 	res := ""
 	string_beg_end, _ := ContainsString(letters_to_be_colored, str)
 	// if there is parts to be colored
@@ -18,7 +16,7 @@ func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname str
 				if idx < len(str)-1 {
 					//* Apply tab if 't' appears
 					if str[idx+1] == 't' {
-						fmt.Print("\t")
+						res += "\t"
 						idx++
 						continue
 					}

@@ -11,19 +11,19 @@ func init() {
 	termWidth = GetTermWidth()
 }
 
-func Aliging(letters_to_be_colored,text, font, align, color string) string {
+func Aliging(letters_to_be_colored, text, font, align, color string) string {
 	if align == "left" || align == "right" || align == "center" {
-		return RightLeft(letters_to_be_colored,text, MapFont(font), align, color)
+		return RightLeft(letters_to_be_colored, text, MapFont(font), align, color)
 	} else if align == "justify" {
+		string_beg_end, _ := ContainsString(letters_to_be_colored, text)
 		lines := strings.Split(text, "\\n")
 		for _, v := range lines {
-			Justify(letters_to_be_colored,text, v, MapFont(font), color)
-			return ""
+			Justify(string_beg_end,letters_to_be_colored, text, v, MapFont(font), color)
 		}
 	}
 	return ""
 }
-func RightLeft(letters_to_be_colored,text, font, align, color string) string {
+func RightLeft(letters_to_be_colored, text, font, align, color string) string {
 	res := ""
 	newres := ""
 	string_beg_end, _ := ContainsString(letters_to_be_colored, text)
@@ -38,7 +38,7 @@ func RightLeft(letters_to_be_colored,text, font, align, color string) string {
 					if idx < len(word)-1 {
 						//* Apply tab if 't' appears
 						if word[idx+1] == 't' {
-							fmt.Print("\t")
+							res += "\t"
 							idx++
 							continue
 						}
@@ -57,19 +57,13 @@ func RightLeft(letters_to_be_colored,text, font, align, color string) string {
 			}
 			if align == "left" {
 				newres += res
-				if i <= 8 {
-					newres += "\n"
-				}
+				newres += "\n"
 			} else if align == "right" {
 				newres += printSpaces(termWidth-len(res)) + res
-				if i <= 8 {
-					newres += "\n"
-				}
-			} else if align == "center" || align == "centre" {
+				newres += "\n"
+			} else if align == "center" {
 				newres += printSpaces((termWidth-len(res))/2) + res
-				if i <= 8 {
-					newres += "\n"
-				}
+				newres += "\n"
 			}
 			res = ""
 		}
@@ -77,16 +71,23 @@ func RightLeft(letters_to_be_colored,text, font, align, color string) string {
 	return newres
 }
 
-func Justify(letters_to_be_colored,text, words, font, color string) {
+func Justify(string_beg_end[][]int,letters_to_be_colored, text, words, font, color string) {
 	sws := SplitWhiteSpacesAWESOME(words)
 	ar := make([][]string, len(sws))
 	j := 0
 	container := ""
 	for i := 0; i < 8; i++ {
 		j = 0
-		for _, letter := range words {
+		for k, letter := range words {
 			if letter != ' ' {
-				container += PrintFileLine((MapART(letter) + i), font, "")
+				if IsInRange(string_beg_end, k) || letters_to_be_colored == "" {
+					// Start printing the colored letler ART
+					container += PrintFileLine(MapART((letter))+i, (font), color)
+				} else {
+					// Start printing the letler ART in default color
+					container += PrintFileLine(MapART((letter))+i, (font), "")
+				}
+				//container += PrintFileLine((MapART(letter) + i), font, "")
 			} else if letter == ' ' && container != "" {
 				ar[j] = append(ar[j], container)
 				container = ""
@@ -101,12 +102,12 @@ func Justify(letters_to_be_colored,text, words, font, color string) {
 		textLen += len(arOfStr[0])
 	}
 	if len(sws) == 1 {
-		Ascii_Print(RightLeft(letters_to_be_colored,text, font, "left", color))
+		Ascii_Print(RightLeft(letters_to_be_colored, text, font, "left", color))
 	} else {
 		numSpaces := (termWidth - textLen) / (len(sws) - 1)
 		for i := 0; i < 8; i++ {
 			for k, v := range ar {
-				fmt.Print(Print_Colorize(color, v[i]))
+				fmt.Print(v[i])
 				if k != len(ar)-1 {
 					fmt.Print(printSpaces(numSpaces))
 				}
