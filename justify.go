@@ -2,6 +2,10 @@ package asciiART
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -18,7 +22,7 @@ func Aliging(letters_to_be_colored, text, font, align, color string) string {
 		string_beg_end, _ := ContainsString(letters_to_be_colored, text)
 		lines := strings.Split(text, "\\n")
 		for _, v := range lines {
-			Justify(string_beg_end,letters_to_be_colored, text, v, MapFont(font), color)
+			Justify(string_beg_end, letters_to_be_colored, text, v, MapFont(font), color)
 		}
 	}
 	return ""
@@ -71,7 +75,7 @@ func RightLeft(letters_to_be_colored, text, font, align, color string) string {
 	return newres
 }
 
-func Justify(string_beg_end[][]int,letters_to_be_colored, text, words, font, color string) {
+func Justify(string_beg_end [][]int, letters_to_be_colored, text, words, font, color string) {
 	sws := SplitWhiteSpacesAWESOME(words)
 	ar := make([][]string, len(sws))
 	j := 0
@@ -126,17 +130,17 @@ func printSpaces(num int) string {
 }
 
 func GetTermWidth() int {
-	// cmd := exec.Command("stty", "size")
-	// cmd.Stdin = os.Stdin
-	// out, err := cmd.Output()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// out = out[:len(out)-1]
-	// tput, _ := strconv.ParseInt(string(out[3:]), 10, 32)
-	// tput2 := int(tput)
-	// return tput2
-	return 186
+	cmd := exec.Command("stty", "size")
+	cmd.Stdin = os.Stdin
+	out, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+	out = out[:len(out)-1]
+	tput, _ := strconv.ParseInt(string(out[3:]), 10, 32)
+	tput2 := int(tput)
+	return tput2
+	//return 186
 }
 
 func SplitWhiteSpacesAWESOME(str string) []string {
