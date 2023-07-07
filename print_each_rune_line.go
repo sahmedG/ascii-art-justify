@@ -2,6 +2,8 @@ package asciiART
 
 func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname string, color string) string {
 	res := ""
+	//size := 0
+	test := ""
 	string_beg_end, _ := ContainsString(letters_to_be_colored, str)
 	// if there is parts to be colored
 
@@ -22,6 +24,7 @@ func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname str
 					}
 				}
 			}
+			test += PrintFileLine(MapART(rune(char))+i, MapFont(fontname), "")
 			if IsInRange(string_beg_end, idx) || letters_to_be_colored == "" {
 				// Start printing the colored letler ART
 				res += PrintFileLine(MapART(rune(char))+i, MapFont(fontname), color)
@@ -29,11 +32,13 @@ func Print_Each_Rune_Line(letters_to_be_colored string, str string, fontname str
 				// Start printing the letler ART in default color
 				res += PrintFileLine(MapART(rune(char))+i, MapFont(fontname), "")
 			}
-			// if i == 0 {
-			// 	size = len(res)
-			// }
+			//if i == 0 {
+			//	size = len(test)
+			//}
 		}
-		res += "\n"
+		if i < 8 {
+			res += "\n"
+		}
 	}
 	return res
 }

@@ -30,6 +30,8 @@ func Aliging(letters_to_be_colored, text, font, align, color string) string {
 func RightLeft(letters_to_be_colored, text, font, align, color string) string {
 	res := ""
 	newres := ""
+	test := ""
+	size := 0
 	string_beg_end, _ := ContainsString(letters_to_be_colored, text)
 	args := strings.Split(text, "\\n")
 	for _, word := range args {
@@ -48,6 +50,7 @@ func RightLeft(letters_to_be_colored, text, font, align, color string) string {
 						}
 					}
 				}
+				test += PrintFileLine(MapART(rune(char))+i, font, "")
 				if IsInRange(string_beg_end, idx) || letters_to_be_colored == "" {
 					// Start printing the colored letler ART
 					res += PrintFileLine(MapART(rune(char))+i, (font), color)
@@ -55,18 +58,18 @@ func RightLeft(letters_to_be_colored, text, font, align, color string) string {
 					// Start printing the letler ART in default color
 					res += PrintFileLine(MapART(rune(char))+i, (font), "")
 				}
-				// if i == 0 {
-				// 	size = len(res)
-				// }
+				if i == 0 {
+					size = len(test)
+				}
 			}
 			if align == "left" {
 				newres += res
 				newres += "\n"
 			} else if align == "right" {
-				newres += printSpaces(termWidth-len(res)) + res
+				newres += printSpaces(termWidth-size) + res
 				newres += "\n"
 			} else if align == "center" {
-				newres += printSpaces((termWidth-len(res))/2) + res
+				newres += printSpaces((termWidth-size)/2) + res
 				newres += "\n"
 			}
 			res = ""
